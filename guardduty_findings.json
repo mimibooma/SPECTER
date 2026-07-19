@@ -1,0 +1,57 @@
+[
+  {
+    "schemaVersion": "2.0",
+    "id": "gd-finding-0001",
+    "type": "UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B",
+    "severity": 5.0,
+    "createdAt": "2026-07-09T03:15:00Z",
+    "title": "Console login by principal svc-deploy-prod from an unusual location",
+    "description": "A successful console login was performed by IAM user svc-deploy-prod from a geolocation that does not match the user's established login pattern, without MFA.",
+    "resource": { "accessKeyDetails": { "userName": "svc-deploy-prod" } },
+    "service": { "action": { "actionType": "AWS_API_CALL" }, "eventFirstSeen": "2026-07-09T03:14:22Z" }
+  },
+  {
+    "schemaVersion": "2.0",
+    "id": "gd-finding-0002",
+    "type": "Recon:IAMUser/TorIPCaller",
+    "severity": 5.0,
+    "createdAt": "2026-07-09T03:16:00Z",
+    "title": "API calls made from a known Tor exit node",
+    "description": "IAM user svc-deploy-prod made multiple discovery-related API calls (GetCallerIdentity, ListUsers, ListRoles) from an IP address associated with the Tor anonymization network.",
+    "resource": { "accessKeyDetails": { "userName": "svc-deploy-prod" } },
+    "service": { "action": { "actionType": "AWS_API_CALL" }, "eventFirstSeen": "2026-07-09T03:14:55Z" }
+  },
+  {
+    "schemaVersion": "2.0",
+    "id": "gd-finding-0003",
+    "type": "PrivilegeEscalation:IAMUser/AnomalousBehavior",
+    "severity": 8.0,
+    "createdAt": "2026-07-09T03:22:00Z",
+    "title": "Anomalous privilege escalation behavior by svc-deploy-prod",
+    "description": "IAM user svc-deploy-prod created a new access key for a separate, higher-privileged principal (svc-backup-admin) and attached the AdministratorAccess managed policy to itself. This combination of actions is inconsistent with the user's historical behavior.",
+    "resource": { "accessKeyDetails": { "userName": "svc-deploy-prod" } },
+    "service": { "action": { "actionType": "AWS_API_CALL" }, "eventFirstSeen": "2026-07-09T03:19:03Z" }
+  },
+  {
+    "schemaVersion": "2.0",
+    "id": "gd-finding-0004",
+    "type": "Stealth:IAMUser/CloudTrailLoggingDisabled",
+    "severity": 7.0,
+    "createdAt": "2026-07-09T03:27:00Z",
+    "title": "CloudTrail logging was disabled",
+    "description": "IAM user svc-deploy-prod called StopLogging on trail org-primary-trail, suspending delivery of management events for approximately 13 minutes before logging was re-enabled.",
+    "resource": { "accessKeyDetails": { "userName": "svc-deploy-prod" } },
+    "service": { "action": { "actionType": "AWS_API_CALL" }, "eventFirstSeen": "2026-07-09T03:26:58Z" }
+  },
+  {
+    "schemaVersion": "2.0",
+    "id": "gd-finding-0005",
+    "type": "Exfiltration:S3/AnomalousBehavior",
+    "severity": 8.0,
+    "createdAt": "2026-07-09T03:37:00Z",
+    "title": "Anomalous S3 object access and cross-account transfer",
+    "description": "A role assumed by svc-deploy-prod read multiple objects from a sensitive finance bucket (corp-finance-reports-2026) and wrote a bundled object to a bucket outside the organization's known inventory (data-relay-temp-8842), during the window CloudTrail logging was disabled.",
+    "resource": { "accessKeyDetails": { "userName": "svc-deploy-prod" } },
+    "service": { "action": { "actionType": "AWS_API_CALL" }, "eventFirstSeen": "2026-07-09T03:31:40Z" }
+  }
+]

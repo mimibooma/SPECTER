@@ -1,0 +1,246 @@
+[
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:14:22Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEXAMPLE0001",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "accountId": "123456789012",
+      "userName": "svc-deploy-prod"
+    },
+    "responseElements": { "ConsoleLogin": "Success" },
+    "additionalEventData": { "MFAUsed": "No" },
+    "eventID": "a1b2c3d4-0001"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:14:55Z",
+    "eventSource": "sts.amazonaws.com",
+    "eventName": "GetCallerIdentity",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "accountId": "123456789012",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0002"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:15:10Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "ListUsers",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0003"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:15:22Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "ListRoles",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0004"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:15:40Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "ListAttachedUserPolicies",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": { "userName": "svc-deploy-prod" },
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0005"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:19:03Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "CreateAccessKey",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": { "userName": "svc-backup-admin" },
+    "responseElements": {
+      "accessKey": { "accessKeyId": "AKIAEXAMPLE00099", "status": "Active" }
+    },
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0006"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:21:47Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "AttachUserPolicy",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": {
+      "userName": "svc-deploy-prod",
+      "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+    },
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0007"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:24:10Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "ListBuckets",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0008"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:26:58Z",
+    "eventSource": "cloudtrail.amazonaws.com",
+    "eventName": "StopLogging",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": { "name": "org-primary-trail" },
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0009"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:29:15Z",
+    "eventSource": "sts.amazonaws.com",
+    "eventName": "AssumeRole",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": {
+      "roleArn": "arn:aws:iam::998877665544:role/OrgFinanceAdminRole",
+      "roleSessionName": "svc-deploy-prod-session"
+    },
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0010"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:31:40Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "ListObjects",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": { "bucketName": "corp-finance-reports-2026" },
+    "userIdentity": {
+      "type": "AssumedRole",
+      "arn": "arn:aws:sts::998877665544:assumed-role/OrgFinanceAdminRole/svc-deploy-prod-session",
+      "accountId": "998877665544"
+    },
+    "eventID": "a1b2c3d4-0011"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:32:05Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": {
+      "bucketName": "corp-finance-reports-2026",
+      "key": "Q2-2026-financials.xlsx"
+    },
+    "userIdentity": {
+      "type": "AssumedRole",
+      "arn": "arn:aws:sts::998877665544:assumed-role/OrgFinanceAdminRole/svc-deploy-prod-session",
+      "accountId": "998877665544"
+    },
+    "eventID": "a1b2c3d4-0012"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:33:12Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": {
+      "bucketName": "corp-finance-reports-2026",
+      "key": "payroll/june2026_payroll.csv"
+    },
+    "userIdentity": {
+      "type": "AssumedRole",
+      "arn": "arn:aws:sts::998877665544:assumed-role/OrgFinanceAdminRole/svc-deploy-prod-session",
+      "accountId": "998877665544"
+    },
+    "eventID": "a1b2c3d4-0013"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:36:50Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "PutObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": {
+      "bucketName": "data-relay-temp-8842",
+      "key": "staged/finance_bundle.zip"
+    },
+    "userIdentity": {
+      "type": "AssumedRole",
+      "arn": "arn:aws:sts::998877665544:assumed-role/OrgFinanceAdminRole/svc-deploy-prod-session",
+      "accountId": "998877665544"
+    },
+    "eventID": "a1b2c3d4-0014"
+  },
+  {
+    "eventVersion": "1.08",
+    "eventTime": "2026-07-09T03:40:02Z",
+    "eventSource": "cloudtrail.amazonaws.com",
+    "eventName": "StartLogging",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "185.220.101.47",
+    "requestParameters": { "name": "org-primary-trail" },
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/svc-deploy-prod",
+      "userName": "svc-deploy-prod"
+    },
+    "eventID": "a1b2c3d4-0015"
+  }
+]

@@ -1,0 +1,107 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#16273C",
+    "primaryTextColor": "#D0E4FF",
+    "primaryBorderColor": "#1E88D4",
+    "lineColor": "#4A6C88",
+    "secondaryColor": "#16273C",
+    "tertiaryColor": "#0B1220",
+    "clusterBkg": "#0B1220",
+    "clusterBorder": "#2A3A50",
+    "titleColor": "#6FA8DC",
+    "fontFamily": "Liberation Sans, Arial, sans-serif",
+    "fontSize": "15px"
+  }
+}}%%
+flowchart TD
+    subgraph SRC["RAW EVIDENCE SOURCES"]
+        CT[("CloudTrail
+        up to 100s of MB/day
+        gzipped JSON to S3")]
+        GD[("GuardDuty Findings
+        small and curated")]
+        VPC[("VPC Flow Logs / Config
+        / other sources")]
+    end
+
+    subgraph ING["INGESTION AND PARSING"]
+        CHECK{"Normalized log store
+        available in target env?"}
+        SQLQ["SQL query against
+        normalized log store
+        filters at the source"]
+        STREAM["Stream raw S3 objects
+        one file at a time"]
+        PARSE["Decompress and parse
+        record by record
+        never load whole file"]
+    end
+
+    subgraph TRI["TRIAGE AND PRE-FILTERING &nbsp; &#40;deterministic&#41;"]
+        RULES["Event-name allow / deny list"]
+        WINDOW["Time-window bounding"]
+        SCOPE["Actor / resource scoping"]
+    end
+
+    subgraph CHK["CHUNKING &nbsp; &#40;only if still too large&#41;"]
+        BATCH["Time-bucketed batches"]
+        SUMM["Per-batch structured summary
+        counts, anomalies, entities"]
+    end
+
+    subgraph BLD["MESSAGE CONSTRUCTION"]
+        SYS["System prompt:
+        SPECTER role and schema"]
+        USR["User message:
+        evidence as JSON text"]
+        TOOLCFG["TOOL_CONFIG:
+        investigation plan schema"]
+    end
+
+    subgraph MDL["MODEL INVOCATION"]
+        CONVERSE["bedrock-runtime
+        converse&#40;&#41; call"]
+        REASON["Reasoning over evidence:
+        maps to ATT&CK, sequences
+        steps, flags gaps"]
+        TOOLCALL["Returns tool_use block"]
+    end
+
+    subgraph OUT["OUTPUT"]
+        EXTRACT["Extract toolUse input"]
+        PRINT["Console output"]
+        SAVE["Save investigation_plan.json"]
+    end
+
+    CT --> CHECK
+    VPC --> CHECK
+    CHECK -->|Yes| SQLQ
+    CHECK -->|No| STREAM
+    STREAM --> PARSE
+    PARSE --> RULES
+    SQLQ --> RULES
+    GD --> RULES
+    RULES --> WINDOW --> SCOPE
+    SCOPE --> BATCH --> SUMM
+    SUMM --> USR
+    SYS --> CONVERSE
+    USR --> CONVERSE
+    TOOLCFG --> CONVERSE
+    CONVERSE --> REASON --> TOOLCALL
+    TOOLCALL --> EXTRACT
+    EXTRACT --> PRINT
+    EXTRACT --> SAVE
+
+    CT -.->|"Phase 01:
+    direct load,
+    no filtering"| USR
+    GD -.-> USR
+
+    classDef implemented fill:#1E88D4,stroke:#5AB0F0,stroke-width:2px,color:#FFFFFF,font-weight:bold
+    classDef planned fill:#16273C,stroke:#7C5CD0,stroke-width:1.5px,stroke-dasharray: 5 4,color:#BCD0E4
+    classDef decision fill:#16273C,stroke:#D4842A,stroke-width:2.5px,color:#F0DCC0,font-weight:bold
+
+    class CT,GD,VPC,SYS,USR,TOOLCFG,CONVERSE,REASON,TOOLCALL,EXTRACT,PRINT,SAVE implemented
+    class SQLQ,STREAM,PARSE,RULES,WINDOW,SCOPE,BATCH,SUMM planned
+    class CHECK decision
