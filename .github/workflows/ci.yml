@@ -1,5 +1,3 @@
-
-Ci · YML
 name: ci
 on:
   push:
