@@ -1,0 +1,682 @@
+# Business Context Configuration for SPECTER
+# ==========================================
+#
+# This file defines the asset criticality mappings, business unit structures,
+# data sensitivity classifications, and response time requirements used by
+# the enhanced SPECTER scoring engine.
+#
+# Use this file to customize the business impact model for your environment.
+# If an asset ARN is not found here, it will be classified by default rules
+# based on its service family (AWS, Azure, GCP) and resource type.
+#
+# ## Structure
+#
+# ```yaml
+# business_units:
+#   - name: "Engineering"
+#     criticality_tier: 2
+#     data_sensitivity: "internal"
+#     optimal_response_hours: 4
+#     sla_breach_risk: true
+#
+# assets:
+#   - arn: "arn:aws:iam::123456789012:access-key/..."
+#     asset_class: "identity"
+#     business_unit: "Engineering"
+#     criticality_tier: 2
+#     data_sensitivity: "internal"
+#     impact_if_compromised: "high"
+#     sla_breach_risk: true
+#     recovery_rto: "2h"
+#
+# asset_defaults:
+#   iam:
+#     compute: 2
+#     data: 2
+#     network: 4
+#     identity: 2
+#     security: 1
+# ```
+#
+# ## Field Definitions
+#
+# ### business_units
+#
+# The organizational structure and their characteristics.
+#
+# | Field            | Type   | Required | Options                           |
+# |------------------|--------|----------|-----------------------------------|
+# | name             | string | ✓        | Any (e.g., "Finance", "Prod")      |
+# | criticality_tier | int    | ✓        | 1-4 (1 = most critical)            |
+# | data_sensitivity | string | ✓        | pci\|phii\|customer\|internal\|public |
+# | optimal_response_hours | int  | ✓        | 1, 4, 24, or 168 (hours)           |
+# | sla_breach_risk  | bool   | ✓        | true or false                     |
+#
+# ### assets
+#
+# Specific asset definitions. Keys by ARN string.
+#
+# | Field              | Type       | Required | Options                                               |
+# |--------------------|------------|----------|-------------------------------------------------------|
+# | arn                | string     | ✓        | Full ARN (used as lookup key)                          |
+# | asset_class        | string     | ✓        | compute\|data\|network\|identity\|security             |
+# | business_unit      | string     | ✗        | Name from business_units                              |
+# | criticality_tier   | int        | ✗        | 1-4                                                   |
+# | data_sensitivity   | string     | ✗        | pci\|phii\|customer\|internal\|public                  |
+# | impact_if_compromised | string | ✗        | severe\|high\|moderate\|low                            |
+# | sla_breach_risk    | bool       | ✗        | true or false                                         |
+# | recovery_rto       | string     | ✗        | ISO 8601 duration (e.g., "1h", "4h", "24h", "7d")      |
+#
+# ### asset_defaults
+#
+# Default classifications for assets not explicitly defined. Grouped by cloud provider.
+#
+# ```yaml
+# asset_defaults:
+#   aws:
+#     iam:
+#       compute: 2
+#       data: 2
+#       network: 4
+#       identity: 2
+#       security: 1
+#     s3:
+#       compute: 1
+#       data: 1
+#       network: 4
+#       identity: 4
+#       security: 4
+#     ecs:
+#       compute: 2
+#       data: 2
+#       network: 2
+#       identity: 2
+#       security: 2
+#     lambda:
+#       compute: 1
+#       data: 1
+#       network: 2
+#       identity: 2
+#       security: 2
+#   azure:
+#     identity:
+#       compute: 2
+#       data: 2
+#       network: 4
+#       identity: 2
+#       security: 1
+# ```
+#
+# ## Default Data Sensitivity Rules
+#
+# | Resource Type       | Default Sensitivity |
+# |---------------------|---------------------|
+# | IAM access keys     | internal            |
+# | IAM roles           | internal            |
+# | S3 buckets          | public              |
+# | RDS instances       | internal            |
+# | DynamoDB tables     | internal            |
+# | Secrets Manager     | secret              |
+# | KMS keys            | secret              |
+# | API Gateway configs | internal            |
+# | Lambda functions    | internal            |
+# | EC2 instances       | internal            |
+# | VPC Flow Logs       | internal            |
+# | CloudTrail logs     | internal            |
+#
+# ## Default Response Effort by Action Type
+#
+# | Action Type         | Default Effort Level |
+# |--------------------|---------------------|
+# | revoke             | 2                   |
+# | rotate             | 2                   |
+# | terminate          | 1                   |
+# | isolate            | 2                   |
+# | update_acl         | 2                   |
+# | download_logs      | 4                   |
+# | analyze            | 3                   |
+# | patch              | 3                   |
+# | reconfigure        | 3                   |
+# | reset_credentials  | 2                   |
+# | block_ip           | 1                   |
+# | quarantine         | 3                   |
+#
+# ## Response Effort by Cloud Provider
+#
+# | Provider   | Effort Multiplier |
+# |------------|-------------------|
+# | AWS        | 1.0               |
+# | Azure      | 1.2               |
+# | GCP        | 1.2               |
+# | Multi-cloud | 1.5               |
+#
+# ## Scoring Weight Configurations
+#
+# The enhanced scoring model weights are defined here and applied in the
+# Scoring Engine (`services/scoring_engine.py`).
+#
+# ```yaml
+# scoring_weights:
+#   business_impact: 0.40
+#   threat_confidence: 0.30
+#   response_effort: 0.20
+#   evidence_quality: 0.10
+# ```
+#
+# Priority Tier Thresholds:
+#
+# | Priority  | Composite Score Range |
+# |-----------|----------------------|
+# | critical  | >= 7.5               |
+# | high      | 5.0 - 7.4            |
+# | medium    | 2.5 - 4.9            |
+# | low       | < 2.5                |
+#
+# ## Response Effort Calculation
+#
+# Effort is calculated as a lookup from the action type, scaled by
+# cloud provider multiplier, and adjusted for resource count.
+#
+# ```
+# effort = base_effort[action_type] * provider_multiplier * resource_count
+# ```
+#
+# Effort Level Mapping:
+#
+# | Effort Level | Score Range |
+# |-------------|-------------|
+# | 1 - Quick   | 0 - 0.5     |
+# | 2 - Moderate| 0.5 - 1.5   |
+# | 3 - Standard| 1.5 - 2.5   |
+# | 4 - Complex | 2.5 - 3.5   |
+# | 5 - Major   | 3.5+        |
+
+business_units:
+  - name: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    optimal_response_hours: 1
+    sla_breach_risk: true
+    rationale: Payment processing and financial transactions. Compromise impacts customers and regulatory compliance.
+
+  - name: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    optimal_response_hours: 1
+    sla_breach_risk: true
+    rationale: Customer PII and personally identifiable information at risk.
+
+  - name: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    optimal_response_hours: 4
+    sla_breach_risk: false
+    rationale: Production build and CI/CD infrastructure. Critical for product delivery.
+
+  - name: "Operations"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    optimal_response_hours: 4
+    sla_breach_risk: true
+    rationale: Infrastructure management and security operations.
+
+  - name: "Customer Facing"
+    criticality_tier: 2
+    data_sensitivity: "customer"
+    optimal_response_hours: 4
+    sla_breach_risk: true
+    rationale: Public-facing APIs and customer portals.
+
+  - name: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    optimal_response_hours: 24
+    sla_breach_risk: false
+    rationale: Development environments and non-sensitive code.
+
+  - name: "Public CDN"
+    criticality_tier: 4
+    data_sensitivity: "public"
+    optimal_response_hours: 168
+    sla_breach_risk: false
+    rationale: Public content delivery network. Low blast radius.
+
+  - name: "Security Monitoring"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    optimal_response_hours: 4
+    sla_breach_risk: true
+    rationale: Security tools and monitoring infrastructure.
+
+assets:
+  # ============= IAM =============
+  
+  "arn:aws:iam::123456789012:access-key/ADAM2S33W":
+    asset_class: "identity"
+    business_unit: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    description: Finance payment processing credentials
+
+  "arn:aws:iam::123456789012:access-key/JEWP5533M":
+    asset_class: "identity"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    recovery_rto: "2h"
+    description: Engineering production deployment credentials
+
+  "arn:aws:iam::123456789012:access-key/T4N5533M":
+    asset_class: "identity"
+    business_unit: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    impact_if_compromised: "moderate"
+    sla_breach_risk: false
+    recovery_rto: "24h"
+    description: Developer account credentials
+
+  "arn:aws:iam::123456789012:access-key/K4N5533M":
+    asset_class: "identity"
+    business_unit: "Public CDN"
+    criticality_tier: 4
+    data_sensitivity: "public"
+    impact_if_compromised: "low"
+    sla_breach_risk: false
+    recovery_rto: "7d"
+    description: Public CDN admin credentials
+
+  "arn:aws:iam::123456789012:user/devops-team":
+    asset_class: "identity"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    recovery_rto: "2h"
+    description: DevOps team IAM user
+
+  "arn:aws:iam::123456789012:access-key/ADEA5S33W":
+    asset_class: "identity"
+    business_unit: "Operations"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    recovery_rto: "2h"
+    description: Ops automation credentials
+
+  # ============= S3 Buckets =============
+
+  "arn:aws:s3:::mycompany-pci-prod":
+    asset_class: "data"
+    business_unit: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    public_access_block: false
+    description: Production PCI cardholder data
+
+  "arn:aws:s3:::mycompany-customer-data":
+    asset_class: "data"
+    business_unit: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    public_access_block: true
+    description: Customer PII and profiles
+
+  "arn:aws:s3:::mycompany-internal-docs":
+    asset_class: "data"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "moderate"
+    sla_breach_risk: false
+    recovery_rto: "4h"
+    public_access_block: true
+    description: Internal engineering documentation
+
+  "arn:aws:s3:::mycompany-dev-bucket":
+    asset_class: "data"
+    business_unit: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    impact_if_compromised: "low"
+    sla_breach_risk: false
+    recovery_rto: "24h"
+    public_access_block: true
+    description: Development artifacts and logs
+
+  "arn:aws:s3:::mycompany-public-cdn":
+    asset_class: "data"
+    business_unit: "Public CDN"
+    criticality_tier: 4
+    data_sensitivity: "public"
+    impact_if_compromised: "low"
+    sla_breach_risk: false
+    recovery_rto: "168h"
+    public_access_block: true
+    description: Publicly accessible marketing content
+
+  "arn:aws:s3:::mycompany-temp-bucket":
+    asset_class: "data"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "moderate"
+    sla_breach_risk: false
+    recovery_rto: "4h"
+    public_access_block: false
+    description: Temporary processing bucket
+
+  # ============= RDS =============
+
+  "arn:aws:rds:::mycompany-prod-db":
+    asset_class: "data"
+    business_unit: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    engine: "postgres"
+    description: Production database with PCI data
+
+  "arn:aws:rds:::mycompany-customer-db":
+    asset_class: "data"
+    business_unit: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    engine: "postgres"
+    description: Customer database
+
+  "arn:aws:rds:::mycompany-dev-db":
+    asset_class: "data"
+    business_unit: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    impact_if_compromised: "low"
+    sla_breach_risk: false
+    recovery_rto: "24h"
+    engine: "postgres"
+    description: Development database
+
+  # ============= Lambda =============
+
+  "arn:aws:lambda:us-west-2:123456789012:function:deployer-func":
+    asset_class: "compute"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    recovery_rto: "2h"
+    memory_mb: 512
+    timeout: 30
+    description: Production deployment automation
+
+  "arn:aws:lambda:us-west-2:123456789012:function:customer-sync":
+    asset_class: "compute"
+    business_unit: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    memory_mb: 256
+    timeout: 60
+    description: Customer data sync service
+
+  "arn:aws:lambda:us-west-2:123456789012:function:dev-bot":
+    asset_class: "compute"
+    business_unit: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    impact_if_compromised: "moderate"
+    sla_breach_risk: false
+    recovery_rto: "24h"
+    memory_mb: 128
+    timeout: 10
+    description: Development bot
+
+  # ============= KMS Keys =============
+
+  "arn:aws:kms:us-west-2:123456789012:key/a1b2c3d4-e5f6-7890-abcd-ef1234567890":
+    asset_class: "security"
+    business_unit: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    description: PCI key management
+
+  "arn:aws:kms:us-west-2:123456789012:key/b2c3d4e5-f6a7-8901-bcde-f12345678901":
+    asset_class: "security"
+    business_unit: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    description: Customer data encryption
+
+  "arn:aws:kms:us-west-2:123456789012:key/c3d4e5f6-a7b8-9012-cdef-123456789012":
+    asset_class: "security"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    description: Internal secrets encryption
+
+  # ============= Secrets Manager =============
+
+  "arn:aws:secretsmanager:us-west-2:123456789012:secret:Finance/AppSettings-*":
+    asset_class: "security"
+    business_unit: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    description: Finance app credentials
+
+  "arn:aws:secretsmanager:us-west-2:123456789012:secret:Customer/APIKeys-*":
+    asset_class: "security"
+    business_unit: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    description: Customer API keys
+
+  "arn:aws:secretsmanager:us-west-2:123456789012:secret:Dev/DbCreds-*":
+    asset_class: "security"
+    business_unit: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    impact_if_compromised: "moderate"
+    sla_breach_risk: false
+    recovery_rto: "24h"
+    description: Development database credentials
+
+  # ============= EC2 =============
+
+  "arn:aws:ec2:us-west-2:123456789012:instance/i-a1b2c3d4e":
+    asset_class: "compute"
+    business_unit: "Finance"
+    criticality_tier: 1
+    data_sensitivity: "pci"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    instance_type: "c5.large"
+    description: Production payment processing server
+
+  "arn:aws:ec2:us-west-2:123456789012:instance/i-b2c3d4e5f":
+    asset_class: "compute"
+    business_unit: "Customer Data"
+    criticality_tier: 1
+    data_sensitivity: "customer"
+    impact_if_compromised: "severe"
+    sla_breach_risk: true
+    recovery_rto: "1h"
+    instance_type: "r5.large"
+    description: Customer data store
+
+  "arn:aws:ec2:us-west-2:123456789012:instance/i-c3d4e5f6a":
+    asset_class: "compute"
+    business_unit: "Engineering Prod"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    recovery_rto: "2h"
+    instance_type: "t3.medium"
+    description: Production application server
+
+  "arn:aws:ec2:us-west-2:123456789012:instance/i-d4e5f6a7b":
+    asset_class: "compute"
+    business_unit: "Operations"
+    criticality_tier: 2
+    data_sensitivity: "internal"
+    impact_if_compromised: "high"
+    sla_breach_risk: true
+    recovery_rto: "2h"
+    instance_type: "t3.small"
+    description: Monitoring and ops automation
+
+  "arn:aws:ec2:us-west-2:123456789012:instance/i-e5f6a7b8c":
+    asset_class: "compute"
+    business_unit: "Development"
+    criticality_tier: 3
+    data_sensitivity: "internal"
+    impact_if_compromised: "moderate"
+    sla_breach_risk: false
+    recovery_rto: "24h"
+    instance_type: "t3.micro"
+    description: Development workstation
+
+  asset_defaults:
+    aws:
+      iam:
+        access_key:
+          compute: 2
+          data: 2
+          network: 4
+          identity: 2
+          security: 1
+        role:
+          compute: 2
+          data: 2
+          network: 4
+          identity: 2
+          security: 1
+      s3:
+        bucket:
+          compute: 1
+          data: 1
+          network: 4
+          identity: 4
+          security: 4
+      rds:
+        instance:
+          compute: 2
+          data: 2
+          network: 4
+          identity: 4
+          security: 4
+      kms:
+        key:
+          compute: 1
+          data: 1
+          network: 4
+          identity: 4
+          security: 4
+      lambda:
+        function:
+          compute: 1
+          data: 1
+          network: 2
+          identity: 2
+          security: 2
+      secretsmanager:
+        secret:
+          compute: 1
+          data: 1
+          network: 4
+          identity: 4
+          security: 4
+      ec2:
+        instance:
+          compute: 2
+          data: 2
+          network: 2
+          identity: 2
+          security: 2
+      cloudtrail:
+        trail:
+          compute: 1
+          data: 1
+          network: 4
+          identity: 3
+          security: 1
+      guardduty:
+        finding:
+          compute: 1
+          data: 1
+          network: 4
+          identity: 3
+          security: 1
+
+scoring_weights:
+  business_impact: 0.40
+  threat_confidence: 0.30
+  response_effort: 0.20
+  evidence_quality: 0.10
+
+priority_thresholds:
+  critical: 7.0
+  high: 5.0
+  medium: 2.5
+  low: 0.0
+
+response_effort_map:
+  revoke: 2
+  rotate: 2
+  terminate: 1
+  isolate: 2
+  update_acl: 2
+  download_logs: 4
+  analyze: 3
+  patch: 3
+  reconfigure: 3
+  reset_credentials: 2
+  block_ip: 1
+  quarantine: 3
+  collect: 4
+  verify: 1
+  restore: 4
+
+cloud_provider_multipliers:
+  aws: 1.0
+  azure: 1.2
+  gcp: 1.2
+  multi_cloud: 1.5
+
+time_sensitivity_defaults:
+  tier_1: 1       # Critical assets - 1 hour
+  tier_2: 4       # High assets - 4 hours
+  tier_3: 24      # Medium assets - 24 hours
+  tier_4: 168     # Low assets - 7 days (168 hours)

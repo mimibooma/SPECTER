@@ -1,0 +1,101 @@
+# Mock Malicious Hash Feed for SPECTER Phase 2
+# ===========================================
+#
+# Contains simulated malicious file hashes with threat intelligence data.
+# Designed for development and testing without external API dependencies.
+#
+# ## Format
+# Format: hash|threat_type|confidence|severity|first_seen|last_seen|description|threat_actor
+#
+# ## Hash Algorithms
+# - SHA256: 64 hex characters (preferred)
+# - SHA1: 40 hex characters
+# - MD5: 32 hex characters
+#
+# ---
+#
+# Ransomware Hashes (SHA256)
+d41d8cd98f00b204e9800998ecf8427e|ransomware|98|critical|2024-01-01|2026-12-31|Emotet RAT dropper sample - known in the wild: Emotet
+e10adc3949ba59abdbe54eee24632d65|ransomware|95|critical|2024-03-01|2026-12-31|Petya ransomware variant: Petya
+79d97f8d5c5e629c3989e58f56458d3a|ransomware|92|critical|2024-05-01|2026-12-31|WannaCry ransomware payload: WannaCry
+a4f57d23b388255e22c6e5b997555358|ransomware|94|critical|2024-06-01|2026-12-31|TrickBot dropper: TrickBot
+c7c5c2f95f7f7c9e7e8e7e8e7e8e7e8e|ransomware|90|critical|2024-07-01|2026-12-31|LockBit 2.0 variant: LockBit
+
+# Cobalt Strike Beacon (SHA256) - Known in Wild
+f75e8c7b8c8e7e8e7e8e7e8e7e8e7e8e|c2_tool|98|critical|2024-01-01|2026-12-31|Cobalt Strike Beacon staged payload: Cobalt Strike
+a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6|c2_tool|95|critical|2024-02-01|2026-12-31|Cobalt Strike C2 callback module: Cobalt Strike
+
+# Metasploit Payloads (SHA256) - Known in Wild
+b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5|exploit_framework|95|high|2024-01-01|2026-12-31|Metasploit reverse shell payload: Metasploit
+c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6|exploit_framework|92|high|2024-03-01|2026-12-31|Metasploit multi/handler module: Metasploit
+
+# PsExec RAT (SHA256) - Known in Wild
+psexec-rat-sample|ransomware|97|critical|2024-06-01|2026-12-31|PsExec remote administration tool abuse: N/A
+psexec-rat-c2|ransomware|96|critical|2024-07-01|2026-12-31|PsExec RAT C2 server: N/A
+
+# Mimikatz - Credential Theft (SHA256)
+8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a|credential_theft|98|critical|2024-01-01|2026-12-31|Mimikatz credential dumping tool: APT29
+9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b|credential_theft|96|critical|2024-02-01|2026-12-31|Mimikatz kerberos ticket extraction: APT29
+
+# PowerShell Empire (C2 Framework) - SHA256
+empire-agent-sample|c2_tool|94|critical|2024-03-01|2026-12-31|PowerShell Empire agent: APT29
+empire-c2-server|c2_tool|93|critical|2024-04-01|2026-12-31|PowerShell Empire C2 server: APT29
+
+# HashiCorp Vault Hacked - SHA256
+vault-hacked-sample|misconfiguration|85|high|2024-05-01|2026-12-31|HashiCorp Vault configuration anomaly: N/A
+
+# Ansible Tower Compromised - SHA256
+ansible-tower-compromised|misconfiguration|82|high|2024-06-01|2026-12-31|Ansible Tower configuration anomaly: N/A
+
+# Suspicious Shell Scripts - SHA256
+base64_encoded_shell.txt|malicious_script|90|high|2024-01-01|2026-12-31|Base64 encoded shell script (potential dropper): Unknown
+obfuscated_python.py|malicious_script|88|high|2024-02-01|2026-12-31|Obfuscated Python script (potential dropper): Unknown
+
+# Additional Ransomware Families (SHA20) for testing
+f0b91499635a4940a0192f52e4777528|ransomware|95|critical|2024-01-01|2026-12-31|Gofiber ransomware: Lazarus
+5f4dcc3b5aa7f5138c4986e1a8f88eba|ransomware|92|critical|2024-03-01|2026-12-31|Xorlock ransomware variant: DarkSide
+c67c19e7a5445a725904195b086eb4f9|ransomware|90|critical|2024-04-01|2026-12-31|Dharma ransomware: Conti
+e99a18c428cb38d5f2309d455a4c30b0|ransomware|88|critical|2024-05-01|2026-12-31|Conti ransomware: Conti
+
+# APT Tools (SHA256) - Unknown but suspicious
+910c552c7c8c16f4c9c8c16f4c9c8c16f|apt_tool|90|critical|2024-06-01|2026-12-31|Unknown APT tool - high suspicion: APT41
+a00c663d8d9d27g5d0d9d27g5d0d9d27g|apt_tool|88|critical|2024-07-01|2026-12-31|Unknown APT tool - medium suspicion: APT41
+
+# Suspicious Legitimate-Tool Abuse (SHA256)
+73b92622a749a44c682c65196a4b159d|tool_abuse|50|low|2024-08-01|2026-12-31|Legitimate tool used for suspicious activity: N/A
+84c93733b850b55d793d76207b5c26ae|tool_abuse|45|low|2024-09-01|2026-12-31|Legitimate tool misconfiguration: N/A
+95d94844c961c66e804e87318c6d37bf|tool_abuse|40|low|2024-10-01|2026-12-31|Legitimate tool anomalous usage: N/A
+
+# Crypto Miners (SHA256)
+miner-sample-cryptominer-ransomware|crypto_mining|95|critical|2024-11-01|2026-12-31|Cryptominer dropper: N/A
+b1e95955d072d77f915f98429d7e48cf|crypto_mining|92|critical|2024-12-01|2026-12-31|XMRig cryptominer: N/A
+
+# Suspicious Cloud Service Configs (SHA256)
+cloud-timeline-stopper|misconfiguration|85|high|2024-01-01|2026-12-31|CloudWatch Logs subscription stopping - suspicious pattern: N/A
+cloud-access-escalator|misconfiguration|82|high|2024-02-01|2026-12-31|Suspicious IAM access pattern: N/A
+cloud-logging-disable-tool|misconfiguration|90|critical|2024-03-01|2026-12-31|CloudTrail logging disabling tool: CloudHunter
+
+# Data Exfiltration Tools (SHA256)
+exfil-script-sample|data_exfiltration|92|critical|2024-04-01|2026-12-31|Data exfiltration script via GitHub: N/A
+suspicious-s3-upload-tool|data_exfiltration|88|high|2024-05-01|2026-12-31|Suspicious S3 upload tool: N/A
+anonymous-drop-client|data_exfiltration|90|critical|2024-06-01|2026-12-31|Anonymous data drop client: N/A
+
+# Known Suspicious Legitimate Tools Used Maliciously
+nslookup-enum-suspicious|reconnaissance|60|medium|2024-01-01|2026-12-31|Legitimate nslookup used for reconnaissance: N/A
+powershell-enum-tools|reconnaissance|55|medium|2024-02-01|2026-12-31|PowerShell enum tools for recon: N/A
+
+# Test Hashes (for testing IOC extraction functionality)
+test-hash-001-simple|test|0|low|2025-01-01|2026-12-31|Test hash with no threat intel: N/A
+test-hash-002-malicious|test_malware|50|low|2025-01-01|2026-12-31|Test hash with simulated low-confidence match: N/A
+test-hash-003-critical|test_critical_malware|95|critical|2025-02-01|2026-12-31|Test hash with simulated high-confidence match: N/A
+
+# More realistic test hashes (simulated based on malware names)
+emotet-dropper-payload|ransomware|95|critical|2025-01-01|2026-06-30|Emotet dropper payload: Lazarus
+cobaltstrike-beacon-sample|c2_tool|98|critical|2025-02-01|2026-09-15|Cobalt Strike beacon: APT28
+trickbot-rat-payload|ransomware|94|critical|2025-03-01|2026-08-30|TrickBot dropper payload: TrickBot
+lockbit-ransomware-sample|ransomware|97|critical|2025-04-01|2026-10-01|LockBit ransomware payload: DarkSide
+aptpayload-sample|apt_tool|92|critical|2025-05-01|2026-11-30|APT malware sample: APT41
+darkside-payment-sample|ransomware|96|critical|2025-06-01|2026-09-15|DarkSide payment decryption: DarkSide
+viln-ransomware-sample|ransomware|95|critical|2025-07-01|2026-10-30|VILN ransomware sample: N/A
+papapaw-ransomware-sample|ransomware|93|critical|2025-08-01|2026-11-15|Papapaw ransomware sample: LockBit
+blackcat-ransomware-sample|ransomware|98|critical|2025-09-01|2026-12-31|BlackCat ransomware sample: DarkSide

@@ -1,0 +1,82 @@
+# Mock Threat Intelligence Feeds for SPECTER Phase 2
+# ================================================
+#
+# These files provide simulated threat intelligence for IOC enrichment.
+# Designed for development and testing without external API dependencies.
+#
+# ## How to Use
+#
+# The threat_intel_enrichment.py service will load these feeds on startup
+# and provide lookups for IPs, domains, and hashes.
+#
+# ## How to Contribute / Create Custom Feeds
+#
+# See THREAT_INTEL_MOCK_DATA.md for formatting guidelines.
+#
+# ## Feed Maintenance
+#
+# - Update these files as new threats are discovered
+# - Consider threat severity levels for each entry
+# - Add timestamps for recency (optional)
+# - Include attribution to sources when possible
+#
+# ---
+#
+# Malicious IP Addresses
+# ----------------------
+# Format: ip|threat_type|confidence|severity|first_seen|last_seen|description|threat_actor
+#
+# Tor Exit Nodes (anonymization, reconnaissance)
+185.220.101.47|tor_exit_node|85|high|2025-01-01|2026-12-31|Known Tor exit node used for anonymized attacks
+203.0.113.50|tor_exit_node|80|medium|2025-06-01|2026-12-31|Tor exit node
+198.51.100.25|tor_exit_node|75|medium|2025-03-15|2026-12-31|Tor exit node with high reputation for abuse
+192.0.2.100|tor_exit_node|70|low|2025-01-01|2026-06-30|Tor exit node with intermittent reputation
+
+# C2 / Command & Control Servers
+45.33.32.156|c2_server|90|critical|2025-02-01|2026-06-30|Cobalt Strike C2 server
+104.244.76.100|c2_server|95|critical|2025-01-01|2026-12-31|APT28 (Fancy Bear) C2 infrastructure
+195.123.27.58|c2_server|85|critical|2025-04-01|2026-08-15|APT29 (The Cloud) C2 server
+91.121.87.18|c2_server|88|critical|2025-05-01|2026-07-01|Equation Group / Havex C2
+5.188.216.6|c2_server|82|critical|2025-03-01|2026-09-01|Unknown APT group infrastructure
+185.175.207.134|c2_server|78|high|2025-01-01|2026-12-31|Tor exit node with C2 characteristics
+
+# Known Malicious Infrastructure (various use cases)
+192.9.1.93|phishing|75|medium|2025-06-01|2026-12-31|Phishing infrastructure provider
+104.26.44.88|ddos|80|high|2025-01-01|2026-12-31|Known DDoS-for-hire provider
+209.85.241.186|legitimate|0|low|2025-01-01|2026-12-31|Google infrastructure (legitimate)
+172.217.164.110|legitimate|0|low|2025-01-01|2026-12-31|Google infrastructure (legitimate)
+
+# Malicious Hosting Providers / CDNs (often abused)
+185.54.222.157|malicious_hosting|70|medium|2025-04-01|2026-12-31|Bulletproof hosting provider
+23.185.156.222|malicious_hosting|65|medium|2025-02-01|2026-09-15|Suspicious hosting infrastructure
+95.214.191.213|malicious_hosting|60|medium|2025-03-01|2026-06-30|Known criminal hosting
+193.158.24.26|malicious_hosting|72|medium|2025-01-01|2026-12-31|Eastern European hosting infrastructure
+185.35.73.165|malicious_hosting|68|medium|2025-05-01|2026-12-31|Bulletproof hosting provider
+
+# Suspicious AWS VPC Resources (abused cloud infrastructure)
+10.0.1.100|suspicious_vpc|50|low|2025-06-01|2026-12-31|Suspicious VPC endpoint used for data exfiltration
+203.0.113.100|suspicious_vpc|45|low|2025-03-01|2026-12-31|Malicious AWS EC2 instance used as pivot point
+198.18.0.50|suspicious_vpc|40|low|2025-01-01|2026-06-30|Compromised VPC endpoint
+10.0.2.50|suspicious_vpc|35|low|2025-04-01|2026-12-31|Compromised EC2 used for lateral movement
+192.0.2.200|suspicious_vpc|30|low|2025-02-01|2026-06-30|Malformed private IP (anomaly indicator)
+
+# IP Range (for detecting subnet abuse)
+10.0.0.0/8|suspicious_subnet|20|low|2025-01-01|2026-12-31|Private subnet used in external communications (anomaly)
+172.16.0.0/12|suspicious_subnet|20|low|2025-01-01|2026-12-31|Private subnet used in external communications (anomaly)
+192.168.0.0/16|suspicious_subnet|15|low|2025-01-01|2026-12-31|Private subnet in external traffic (anomaly)
+
+# Geolocation-based Suspicious IPs
+127.0.0.1|loopback_anomaly|50|medium|2025-01-01|2026-12-31|Loopback address in external traffic (anomaly indicator)
+127.0.0.2|loopback_anomaly|50|medium|2025-01-01|2026-12-31|Loopback address in external traffic (anomaly indicator)
+0.0.0.0|anomaly|60|medium|2025-01-01|2026-12-31|Invalid IP address in network traffic
+255.255.255.255|anomaly|55|medium|2025-01-01|2026-12-31|Invalid IP address (broadcast) in traffic
+41.61.224.200|anomaly|50|medium|2025-03-01|2026-12-31|IP with suspicious geolocation pattern
+
+# Additional C2 / Command Infrastructure (by threat group)
+165.22.220.43|c2_server|85|critical|2025-06-01|2026-10-15|APT29 (The Cloud) infrastructure
+92.118.35.225|c2_server|80|critical|2025-04-01|2026-09-01|APT28 (Fancy Bear) infrastructure
+159.89.195.50|c2_server|82|critical|2025-07-01|2026-11-01|Lazarus Group C2
+201.161.47.193|c2_server|78|high|2025-05-01|2026-08-15|FIN7/DRiDder C2 infrastructure
+45.153.19.230|c2_server|88|critical|2025-08-01|2026-12-31|DarkSide ransomware C2 server
+51.15.189.47|c2_server|90|critical|2025-09-01|2026-12-31|BlackEnergy C2 server
+77.86.40.149|c2_server|85|critical|2025-02-01|2026-10-01|Turla DDoS malware C2
