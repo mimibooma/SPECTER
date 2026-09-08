@@ -1,0 +1,24 @@
+
+Gitignore · TXT
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+investigation_plan_output.json
+incident.md
+*.local.md
+.env
+*.pem
+.aws/
+.vscode/
+.idea/
+.DS_Store
+ 
+
+
+
+
+
+
